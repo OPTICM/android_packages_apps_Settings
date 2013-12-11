@@ -2,7 +2,8 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-    <!-- QS Power menu -->
-    <string name="title_tile_power">Power Menu</string>      
+    <!-- QS and navring Power menu -->
+    <string name="title_tile_power">Power Menu</string> 
+    <string name="navring_action_power_menu">Power menu</string>       
 
 </resources>
