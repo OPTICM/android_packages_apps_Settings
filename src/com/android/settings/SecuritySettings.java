@@ -80,6 +80,14 @@ public class SecuritySettings extends RestrictedSettingsFragment
     // CyanogenMod Additions
     private static final String KEY_APP_SECURITY_CATEGORY = "app_security";
     private static final String KEY_SMS_SECURITY_CHECK_PREF = "sms_security_check_limit";
+    private static final String SLIDE_LOCK_TIMEOUT_DELAY = "slide_lock_timeout_delay";
+    private static final String SLIDE_LOCK_SCREENOFF_DELAY = "slide_lock_screenoff_delay";
+    private static final String LOCKSCREEN_QUICK_UNLOCK_CONTROL = "quick_unlock_control";
+    private static final String CATEGORY_ADDITIONAL = "additional_options";
+    
+    // crDroid Additions
+    private static final String LOCK_NUMPAD_RANDOM = "lock_numpad_random";
+
     private PackageManager mPM;
     private DevicePolicyManager mDPM;
 
@@ -93,6 +101,7 @@ public class SecuritySettings extends RestrictedSettingsFragment
     private DialogInterface mWarnInstallApps;
     private CheckBoxPreference mToggleVerifyApps;
 
+    private ListPreference mLockNumpadRandom;
 
     private Preference mNotificationAccess;
 
@@ -151,27 +160,108 @@ public class SecuritySettings extends RestrictedSettingsFragment
             }
         }
 
-        mSmsSecurityCheck = (ListPreference) root.findPreference(KEY_SMS_SECURITY_CHECK_PREF);
-        // Determine options based on device telephony support
-        if (pm.hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
-            mSmsSecurityCheck = (ListPreference) root.findPreference(KEY_SMS_SECURITY_CHECK_PREF);
-            mSmsSecurityCheck.setOnPreferenceChangeListener(this);
-            int smsSecurityCheck = Integer.valueOf(mSmsSecurityCheck.getValue());
-            updateSmsSecuritySummary(smsSecurityCheck);
-        } else {
-            // No telephony, remove dependent options
-            PreferenceGroup appCategory = (PreferenceGroup)
-                    root.findPreference(KEY_APP_SECURITY_CATEGORY);
-            appCategory.removePreference(mSmsSecurityCheck);
-            root.removePreference(appCategory);
+        // lock after preference
+        mLockAfter = (ListPreference) root.findPreference(KEY_LOCK_AFTER_TIMEOUT);
+        if (mLockAfter != null) {
+            setupLockAfterPreference();
+            updateLockAfterPreferenceSummary();
+        } else if (!mLockPatternUtils.isLockScreenDisabled() && isCmSecurity) {
+            addPreferencesFromResource(R.xml.security_settings_slide_delay_cyanogenmod);
+
+            mSlideLockTimeoutDelay = (ListPreference) root
+                    .findPreference(SLIDE_LOCK_TIMEOUT_DELAY);
+            int slideTimeoutDelay = Settings.System.getInt(resolver,
+                    Settings.System.SCREEN_LOCK_SLIDE_TIMEOUT_DELAY, 5000);
+            mSlideLockTimeoutDelay.setValue(String.valueOf(slideTimeoutDelay));
+            updateSlideAfterTimeoutSummary();
+            mSlideLockTimeoutDelay.setOnPreferenceChangeListener(this);
+
+            mSlideLockScreenOffDelay = (ListPreference) root
+                    .findPreference(SLIDE_LOCK_SCREENOFF_DELAY);
+            int slideScreenOffDelay = Settings.System.getInt(resolver,
+                    Settings.System.SCREEN_LOCK_SLIDE_SCREENOFF_DELAY, 0);
+            mSlideLockScreenOffDelay.setValue(String.valueOf(slideScreenOffDelay));
+            updateSlideAfterScreenOffSummary();
+            mSlideLockScreenOffDelay.setOnPreferenceChangeListener(this);
         }
 
-        if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
-            MSimTelephonyManager tm = MSimTelephonyManager.getDefault();
-            int numPhones = MSimTelephonyManager.getDefault().getPhoneCount();
-            boolean disableLock = true;
-            boolean removeLock = true;
-            for (int i = 0; i < numPhones; i++) {
+        if (isCmSecurity) {
+            // lock instantly on power key press
+            mPowerButtonInstantlyLocks = (CheckBoxPreference) root.findPreference(
+                    KEY_POWER_INSTANTLY_LOCKS);
+            checkPowerInstantLockDependency();
+        }
+
+        // biometric weak liveliness
+        mBiometricWeakLiveliness =
+                (CheckBoxPreference) root.findPreference(KEY_BIOMETRIC_WEAK_LIVELINESS);
+
+        // visible pattern
+        mVisiblePattern = (CheckBoxPreference) root.findPreference(KEY_VISIBLE_PATTERN);
+
+        // visible error pattern
+        mVisibleErrorPattern = (CheckBoxPreference) root.findPreference(KEY_VISIBLE_ERROR_PATTERN);
+
+        // visible dots
+        mVisibleDots = (CheckBoxPreference) root.findPreference(KEY_VISIBLE_DOTS);
+
+        // lock instantly on power key press
+        mPowerButtonInstantlyLocks = (CheckBoxPreference) root.findPreference(
+                KEY_POWER_INSTANTLY_LOCKS);
+
+        // don't display visible pattern if biometric and backup is not pattern
+        if (resid == R.xml.security_settings_biometric_weak &&
+                mLockPatternUtils.getKeyguardStoredPasswordQuality() !=
+                DevicePolicyManager.PASSWORD_QUALITY_SOMETHING) {
+            PreferenceGroup securityCategory = (PreferenceGroup)
+                    root.findPreference(KEY_SECURITY_CATEGORY);
+            if (securityCategory != null && mVisiblePattern != null &&
+                    mVisibleErrorPattern != null && mVisibleDots != null) {
+                securityCategory.removePreference(mVisiblePattern);
+                securityCategory.removePreference(mVisibleErrorPattern);
+                securityCategory.removePreference(mVisibleDots);
+            }
+        }
+
+	// Lock Numpad Random
+        mLockNumpadRandom = (ListPreference) root.findPreference(LOCK_NUMPAD_RANDOM);
+        if (mLockNumpadRandom != null) {
+            mLockNumpadRandom.setValue(String.valueOf(
+                    Settings.Secure.getInt(getContentResolver(),
+                    Settings.Secure.LOCK_NUMPAD_RANDOM, 0)));
+            mLockNumpadRandom.setSummary(mLockNumpadRandom.getEntry());
+            mLockNumpadRandom.setOnPreferenceChangeListener(this);
+        }
+
+        // Append the rest of the settings
+        if (!isCmSecurity) {
+            addPreferencesFromResource(R.xml.security_settings_misc);
+
+            if (MSimTelephonyManager.getDefault().isMultiSimEnabled()) {
+                MSimTelephonyManager tm = MSimTelephonyManager.getDefault();
+                int numPhones = MSimTelephonyManager.getDefault().getPhoneCount();
+                boolean disableLock = true;
+                boolean removeLock = true;
+                for (int i = 0; i < numPhones; i++) {
+                    // Do not display SIM lock for devices without an Icc card
+                    if (tm.hasIccCard(i)) {
+                        // Disable SIM lock if sim card is missing or unknown
+                        removeLock = false;
+                        if (!((tm.getSimState(i) == TelephonyManager.SIM_STATE_ABSENT)
+                                || (tm.getSimState(i) == TelephonyManager.SIM_STATE_UNKNOWN)
+                                || (tm.getSimState(i) == TelephonyManager.SIM_STATE_CARD_IO_ERROR))) {
+                            disableLock = false;
+                        }
+                    }
+                }
+                if (removeLock) {
+                    root.removePreference(root.findPreference(KEY_SIM_LOCK));
+                } else {
+                    if (disableLock) {
+                        root.findPreference(KEY_SIM_LOCK).setEnabled(false);
+                    }
+                }
+            } else {
                 // Do not display SIM lock for devices without an Icc card
                 if (tm.hasIccCard(i)) {
                     // Disable SIM lock if sim card is missing or unknown
@@ -429,7 +519,33 @@ public class SecuritySettings extends RestrictedSettingsFragment
 
     @Override
     public boolean onPreferenceChange(Preference preference, Object value) {
-        if (preference == mSmsSecurityCheck) {
+        if (preference == mLockAfter) {
+            int timeout = Integer.parseInt((String) value);
+            try {
+                Settings.Secure.putInt(getContentResolver(),
+                        Settings.Secure.LOCK_SCREEN_LOCK_AFTER_TIMEOUT, timeout);
+            } catch (NumberFormatException e) {
+                Log.e("SecuritySettings", "could not persist lockAfter timeout setting", e);
+            }
+            updateLockAfterPreferenceSummary();
+            checkPowerInstantLockDependency();
+        } else if (preference == mSlideLockTimeoutDelay) {
+            int slideTimeoutDelay = Integer.valueOf((String) value);
+            Settings.System.putInt(getContentResolver(),
+                    Settings.System.SCREEN_LOCK_SLIDE_TIMEOUT_DELAY, slideTimeoutDelay);
+            updateSlideAfterTimeoutSummary();
+        } else if (preference == mSlideLockScreenOffDelay) {
+            int slideScreenOffDelay = Integer.valueOf((String) value);
+            Settings.System.putInt(getContentResolver(),
+                    Settings.System.SCREEN_LOCK_SLIDE_SCREENOFF_DELAY, slideScreenOffDelay);
+            updateSlideAfterScreenOffSummary();
+	    } else if (preference == mLockNumpadRandom) {
+            Settings.Secure.putInt(getContentResolver(),
+                    Settings.Secure.LOCK_NUMPAD_RANDOM,
+                    Integer.valueOf((String) value));
+            mLockNumpadRandom.setValue(String.valueOf(value));
+            mLockNumpadRandom.setSummary(mLockNumpadRandom.getEntry());
+        } else if (preference == mSmsSecurityCheck) {
             int smsSecurityCheck = Integer.valueOf((String) value);
             Settings.Global.putInt(getContentResolver(),
                     Settings.Global.SMS_OUTGOING_CHECK_MAX_COUNT, smsSecurityCheck);
