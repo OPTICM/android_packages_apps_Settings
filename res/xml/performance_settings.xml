@@ -40,6 +40,22 @@
         android:fragment="com.android.settings.cyanogenmod.MemoryManagement"
         android:title="@string/memory_management_title" />
 
+    <PreferenceScreen
+        android:id="@+id/initD"
+        android:fragment="com.android.settings.performance.InitD"
+        android:title="@string/init_d_title"
+        android:summary="@string/header_summary_init_d" />
+
+    <PreferenceScreen
+	android:key="lcd_density_setup"
+        android:fragment="com.android.settings.performance.fragments.DensityChanger"
+        android:title="@string/lcd_density_title" />
+
+    <PreferenceScreen
+        android:key="buildprop_modder"
+        android:title="@string/propmodder_title"
+        android:fragment="com.android.settings.performance.PropModder"/>
+
     <CheckBoxPreference
         android:key="pref_use_16bpp_alpha"
         android:title="@string/pref_use_16bpp_alpha_title"
