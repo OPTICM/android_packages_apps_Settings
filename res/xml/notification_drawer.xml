@@ -38,16 +38,12 @@
         android:entries="@array/notification_drawer_collapse_on_dismiss_entries"
         android:entryValues="@array/notification_drawer_collapse_on_dismiss_values" />
 
-    <PreferenceScreen
-            settings:includeXmlForSearch="@xml/quick_settings_panel"
-            android:key="quick_settings_panel"
-            android:fragment="com.android.settings.quicksettings.QuickSettings"
-            android:title="@string/quick_settings_panel_title" />
-
-    <Preference
-            android:key="heads_up_enabled"
-            android:fragment="com.android.settings.headsup.HeadsUpSettings"
-            android:title="@string/category_heads_up" />
+    <ListPreference
+        android:key="smart_pulldown"
+        android:title="@string/smart_pulldown_title"
+        android:entries="@array/smart_pulldown_entries"
+        android:entryValues="@array/smart_pulldown_values"
+        android:persistent="false" />
 
     <PreferenceCategory
         android:title="@string/category_quick_access" >
