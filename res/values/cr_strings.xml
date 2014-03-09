@@ -215,4 +215,10 @@
     <string name="smart_pulldown_dismissable">Dismissable</string>
     <string name="smart_pulldown_persistent">Persistent</string>
 
+    <!-- Ability to disable hardware keys via nav bar settings -->
+    <string name="hw_keys_title">Hardware Keys</string>
+    <string name="key_menu_enabled">Menu Key Enabled</string>
+    <string name="key_back_enabled">Back Key Enabled</string>
+    <string name="key_home_enabled">Home Key Enabled</string>
+
 </resources>
