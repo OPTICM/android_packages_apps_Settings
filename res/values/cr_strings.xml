@@ -3,6 +3,7 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <!-- General strings -->
+    <string name="default_string">Default</string>
     <string name="recents_panel_settings_title" >Recents panel settings</string>
     <string name="reset">Reset</string>
 
