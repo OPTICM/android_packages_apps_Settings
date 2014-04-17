@@ -536,6 +536,14 @@ public class Utils {
         return new File(filename).exists();
     }
 
+    public static boolean fileIsReadable(String fname) {
+        return new File(fname).canRead();
+    }
+
+    public static boolean fileIsWritable(String fname) {
+        return new File(fname).canWrite();
+    }
+
     public static String fileReadOneLine(String fname) {
         BufferedReader br;
         String line = null;
@@ -771,5 +779,19 @@ public class Utils {
         }
 
         return true;
+    }
+
+    public static Bundle getApplicationMetadata(Context context, String pkg) {
+        if (pkg != null) {
+            try {
+                ApplicationInfo ai = context.getPackageManager().getApplicationInfo(
+                        pkg, PackageManager.GET_META_DATA);
+                return ai.metaData;
+            } catch (NameNotFoundException e) {
+                return null;
+            }
+        }
+
+        return null;
     }
 }
