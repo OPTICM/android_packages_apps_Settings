@@ -30,13 +30,13 @@ public class SettingsSearchDatabaseHelper extends SQLiteOpenHelper {
     // general database configuration and tables
     private static final String sDatabaseName = "search.db";
 
-    protected static final int DATABASE_VERSION = 1;
+    protected static final int DATABASE_VERSION = 2;
     private Context mContext;
 
-    public static SettingsSearchDatabaseHelper getInstance(Context ctx) {
+    public static SettingsSearchDatabaseHelper getInstance(Context context) {
         if (mInstance == null) {
             mInstance = new SettingsSearchDatabaseHelper(
-                    ctx.getApplicationContext(), DATABASE_VERSION);
+                    context.getApplicationContext(), DATABASE_VERSION);
         }
         return mInstance;
     }
@@ -56,7 +56,7 @@ public class SettingsSearchDatabaseHelper extends SQLiteOpenHelper {
                 DatabaseContract.Settings.ACTION_ICON + " INTEGER," +
                 DatabaseContract.Settings.ACTION_LEVEL + " INTEGER," +
                 DatabaseContract.Settings.ACTION_FRAGMENT + " TEXT," +
-                DatabaseContract.Settings.ACTION_PARENT_TITLE + " TEXT" +
+                DatabaseContract.Settings.ACTION_PARENT_TITLE + " INTEGER" +
                 ");");
         db.execSQL(builder.toString());
     }
@@ -73,6 +73,10 @@ public class SettingsSearchDatabaseHelper extends SQLiteOpenHelper {
     }
 
     public void insertHeader(Header header) {
+        insertHeader(header, 0);
+    }
+
+    public void insertHeader(Header header, int parentTitle) {
         if (header == null) {
             return;
         }
@@ -80,16 +84,16 @@ public class SettingsSearchDatabaseHelper extends SQLiteOpenHelper {
         if (!TextUtils.isEmpty(header.title)) {
             title = header.title.toString();
         } else if (header.titleRes != 0) {
-            title = mContext.getResources().getString(header.titleRes);
+            title = mContext.getString(header.titleRes);
         }
         if (TextUtils.isEmpty(title)) {
             return;
         }
-        insertEntry(header, title, 0, null, header.iconRes, null);
+        insertEntry(header, title, 0, null, header.iconRes, parentTitle);
     }
 
     public void insertEntry(String title, int level, String fragment,
-            int iconRes, String parentTitle) {
+            int iconRes, int parentTitle) {
         if (TextUtils.isEmpty(title)) {
             return;
         }
@@ -97,7 +101,7 @@ public class SettingsSearchDatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void insertEntry(Header header, String title, int level, String fragment,
-            int iconRes, String parentTitle) {
+            int iconRes, int parentTitle) {
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values = new ContentValues();
         if (header != null) {
