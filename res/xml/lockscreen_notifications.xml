@@ -16,7 +16,8 @@
 
 <PreferenceScreen
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/notifications_on_lockscreen">
+    android:title="@string/notifications_on_lockscreen"
+    xmlns:settings="http://schemas.android.com/apk/res/com.android.settings">
 
     <Preference
             style="?android:preferenceInformationStyle"
@@ -34,6 +35,7 @@
          <ListPreference
             android:key="peek_pickup_timeout"
             android:title="@string/peek_pickup_timeout_title"
+            android:persistent="false"
             android:entries="@array/peek_pickup_timeout_entries"
             android:entryValues="@array/peek_pickup_timeout_values"
             android:dependency="notification_peek" />
