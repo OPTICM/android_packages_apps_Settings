@@ -1,12 +1,7 @@
 package com.android.settings.crdroid;
 
-import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -51,8 +46,6 @@ public class LockscreenNotifications extends SettingsPreferenceFragment implemen
     private static final String KEY_EXCLUDED_APPS = "excluded_apps";
     private static final String KEY_NOTIFICATION_COLOR = "notification_color";
 
-    private static final String PEEK_APPLICATION = "com.jedga.peek";
-
     private CheckBoxPreference mNotificationPeek;
     private ListPreference mPeekPickupTimeout;
     private ListPreference mPeekWakeTimeout;
@@ -70,23 +63,6 @@ public class LockscreenNotifications extends SettingsPreferenceFragment implemen
     private SeekBarPreference mOffsetTop;
     private AppMultiSelectListPreference mExcludedAppsPref;
     private ColorPickerPreference mNotificationColor;
-
-    private PackageStatusReceiver mPackageStatusReceiver;
-    private IntentFilter mIntentFilter;
-
-    private boolean isPeekAppInstalled() {
-        return isPackageInstalled(PEEK_APPLICATION);
-    }
-
-    private boolean isPackageInstalled(String packagename) {
-        PackageManager pm = getActivity().getPackageManager();
-        try {
-            pm.getPackageInfo(packagename, PackageManager.GET_ACTIVITIES);
-            return true;
-        } catch (NameNotFoundException e) {
-           return false;
-        }
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -204,30 +180,13 @@ public class LockscreenNotifications extends SettingsPreferenceFragment implemen
             general.removePreference(mShowAlways);
         }
 
-        if (mPackageStatusReceiver == null) {
-            mPackageStatusReceiver = new PackageStatusReceiver();
-        }
-        if (mIntentFilter == null) {
-            mIntentFilter = new IntentFilter();
-            mIntentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-            mIntentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        }
-        getActivity().registerReceiver(mPackageStatusReceiver, mIntentFilter);
-
         updateNotificationOptions();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(mPackageStatusReceiver, mIntentFilter);
         updateState();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        getActivity().unregisterReceiver(mPackageStatusReceiver);
     }
 
     private void updateState() {
@@ -237,8 +196,7 @@ public class LockscreenNotifications extends SettingsPreferenceFragment implemen
     private void updatePeekCheckbox() {
         boolean enabled = Settings.System.getInt(getContentResolver(),
                 Settings.System.PEEK_STATE, 0) == 1;
-        mNotificationPeek.setChecked(enabled && !isPeekAppInstalled());
-        mNotificationPeek.setEnabled(!isPeekAppInstalled());
+        mNotificationPeek.setChecked(enabled);
     }
 
     @Override
@@ -391,18 +349,6 @@ public class LockscreenNotifications extends SettingsPreferenceFragment implemen
                     Settings.System.PEEK_STATE, 0);
             } else {
                 mNotificationPeek.setEnabled(true);
-            }
-        }
-    }
-
-    public class PackageStatusReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_PACKAGE_ADDED)) {
-                updatePeekCheckbox();
-            } else if(action.equals(Intent.ACTION_PACKAGE_REMOVED)) {
-                updatePeekCheckbox();
             }
         }
     }
