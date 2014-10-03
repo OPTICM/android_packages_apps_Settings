@@ -850,9 +850,6 @@
     <string name="heads_up_bg_color_title">Background color</string>
     <string name="heads_up_text_color_title">Text color</string>
 
-    <!-- Heads-up floating window -->
-    <string name="heads_up_floating_window">Launch in floating window</string>
-
     <!-- Heads-up disable on lockscreen -->
     <string name="heads_up_exclude_from_lock_screen">Disable on lockscreen</string>
 
@@ -871,5 +868,5 @@
     <string name="show_network_traffic_1000">1000 ms</string>
     <string name="show_network_traffic_1500">1500 ms</string>
     <string name="show_network_traffic_2000">2000 ms</string>
-    
+
 </resources>
