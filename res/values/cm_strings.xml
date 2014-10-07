@@ -296,8 +296,6 @@
     <!-- Screen security -->
     <string name="screen_security_category">Screen security</string>
     <string name="screen_security_summary">View or change lock screen security settings</string>
-    <string name="unlock_scramble_pin_layout_title">Scramble layout</string>
-    <string name="unlock_scramble_pin_layout_summary">Scramble PIN layout when unlocking device</string>
     <string name="unlock_menu_unlock_title">Menu unlock</string>
     <string name="unlock_menu_unlock_summary">Pressing the menu button unlocks the device</string>
     <string name="unlock_home_unlock_title">Home unlock</string>
@@ -943,10 +941,7 @@ two in order to insert additional control points. \'Remove\' deletes the selecte
 
     <!-- Status bar -->
     <string name="status_bar_title">Status bar</string>
-    <string name="status_bar_clock_title">Clock style</string>
-    <string name="status_bar_clock_style_default">Default</string>
-    <string name="status_bar_clock_style_center">Center</string>
-    <string name="status_bar_clock_style_hidden">Hidden</string>
+    <string name="status_bar_show_clock_title">Show clock</string>
     <string name="status_bar_battery_title">Battery status style</string>
     <string name="status_bar_style_icon_portrait">Icon portrait</string>
     <string name="status_bar_style_icon_landscape">Icon landscape</string>
@@ -1165,8 +1160,8 @@ two in order to insert additional control points. \'Remove\' deletes the selecte
     <string name="data_usage_lengths_spinner_subtitle">Cycle length:</string>
 
     <!-- Buttons - Enable navbar -->
-    <string name="disable_navkeys_title">Enable on-screen nav bar</string>
-    <string name="disable_navkeys_summary">Enable on-screen navigation bar and disable hardware buttons</string>
+    <!---<string name="disable_navkeys_title">Enable on-screen nav bar</string>
+    <string name="disable_navkeys_summary">Enable on-screen navigation bar and disable hardware buttons</string>-->
 
     <!-- Voice+ -->
     <string name="voice_plus_title" translatable="false">Voice+</string>
@@ -1191,7 +1186,8 @@ two in order to insert additional control points. \'Remove\' deletes the selecte
 
     <!-- Set Subscription screen: label no sim -->
     <string name="sub_no_sim">No SIM</string>
-    <string name="multi_sim_entry_format" translatable="false"><xliff:g id="operator">%1$s</xliff:g>-<xliff:g id="index">%2$d</xliff:g></string>
+    <string name="multi_sim_entry_format_no_carrier" translatable="false">SIM - <xliff:g id="index">%1$d</xliff:g></string>
+    <string name="multi_sim_entry_format" translatable="false"><xliff:g id="operator">%1$s</xliff:g> - <xliff:g id="index">%2$d</xliff:g></string>
 
     <!-- Main settings screen, Multi Sim settings title for item to go into the Multi settings -->
     <string name="multi_sim_settings_title">Multi SIM</string>

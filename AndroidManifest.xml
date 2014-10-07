@@ -2026,31 +2026,6 @@
                 android:resource="@id/user_settings" />
         </activity>
 
-        <activity android:name="Settings$PaymentSettingsActivity"
-                android:uiOptions="splitActionBarWhenNarrow"
-                android:label="@string/nfc_payment_settings_title"
-                android:taskAffinity=""
-                android:excludeFromRecents="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.settings.NFC_PAYMENT_SETTINGS" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-            <meta-data android:name="com.android.settings.FRAGMENT_CLASS"
-                android:value="com.android.settings.nfc.PaymentSettings" />
-            <meta-data android:name="com.android.settings.TOP_LEVEL_HEADER_ID"
-                android:resource="@id/nfc_payment_settings" />
-        </activity>
-        <activity android:name=".nfc.PaymentDefaultDialog"
-                  android:label="@string/nfc_payment_set_default_label"
-                  android:excludeFromRecents="true"
-                  android:theme="@*android:style/Theme.Holo.Light.Dialog.Alert">
-            <intent-filter>
-                <action android:name="android.nfc.cardemulation.action.ACTION_CHANGE_DEFAULT" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
         <activity android:name=".SmsDefaultDialog"
                   android:label="@string/sms_application_title"
                   android:excludeFromRecents="true"

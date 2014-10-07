@@ -27,8 +27,6 @@ import android.provider.Settings;
 import com.android.settings.R;
 import com.android.settings.SettingsPreferenceFragment;
 
-import android.preference.RingtonePreference;
-
 import com.android.internal.util.crdroid.DeviceUtils;
 
 public class NotificationDrawer extends SettingsPreferenceFragment implements
@@ -39,7 +37,6 @@ public class NotificationDrawer extends SettingsPreferenceFragment implements
     private static final String PRE_SMART_PULLDOWN = "smart_pulldown";
     
     private ListPreference mCollapseOnDismiss;
-
     private ListPreference mSmartPulldown;
     
     @Override
@@ -47,6 +44,7 @@ public class NotificationDrawer extends SettingsPreferenceFragment implements
         super.onCreate(savedInstanceState);
 
         addPreferencesFromResource(R.xml.notification_drawer);
+        PreferenceScreen prefScreen = getPreferenceScreen();
 
         // Notification drawer
         int collapseBehaviour = Settings.System.getInt(getContentResolver(),
@@ -118,4 +116,5 @@ public class NotificationDrawer extends SettingsPreferenceFragment implements
             mSmartPulldown.setSummary(res.getString(R.string.smart_pulldown_summary, type));
         }
     }
+
 }

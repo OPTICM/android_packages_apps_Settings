@@ -12,6 +12,7 @@
     <string name="ok">OK</string>
     <string name="enabled">Enabled</string>
     <string name="disabled">Disabled</string>
+    <string name="note">NOTE</string>
 
     <!-- Advanced settings -->
     <string name="advanced_options_settings_title">Advanced</string>
@@ -158,7 +159,7 @@
     <string name="general">General</string>
     <string name="layout">Layout</string>
     <string name="privacy">Privacy</string>
-    <string name="Lockscreen_notifications_header">Lockscreen Notifications</string>
+    <string name="Lockscreen_notifications_header">Lockscreen notifications</string>
     <string name="lockscreen_notifications">Lockscreen notifications</string>
     <string name="lockscreen_notifications_summary">Show pending notifications on lockscreen</string>
     <string name="pocket_mode">Pocket mode</string>
@@ -186,6 +187,12 @@
     <string name="excluded_apps_summary">Excluded applications will not show up as lockscreen notifications</string>
     <string name="notification_color">Notification background color</string>
 
+    <string name="notifications_on_lockscreen">Notifications on lockscreen</string>
+    <string name="notifications_on_lockscreen_summary">Choose between manners to show pending notifications on lockscreen</string>
+    <string name="notifications_on_lockscreen_warning_summary">Each one of notifications on lockscreen services under (PEEK or/and LOCKSCREEN NOTIFICATIONS) will auto disable the other. Make sure to check when disable one of them if you want to use one of those features again. </string>
+
+    <!-- Extra display settings -->
+    <string name="extra_display_settings_title">Extra settings</string>
     <!-- Screen recorder -->
     <string name="screen_recorder_title">Screen recorder</string>
     <string name="screen_recorder_summary">Adjust screen recorder settings</string>
@@ -193,7 +200,6 @@
     <string name="screen_recorder_video_bitrate_title">Bitrate</string>
     <string name="screen_recorder_record_audio_title">Record audio</string>
     <string name="screen_recorder_record_audio_summary">Record audio from the microphone</string>
-
     <!-- video sizes -->
     <string name="screen_recorder_size_240x400">240x400</string>
     <string name="screen_recorder_size_360x640">360x640</string>
@@ -202,7 +208,6 @@
     <string name="screen_recorder_size_540x960">540x960</string>
     <string name="screen_recorder_size_600x1024">600x1024</string>
     <string name="screen_recorder_size_720x1280">720x1280</string>
-
     <!-- frame rates -->
     <string name="screen_recorder_bitrate_title_100000">100 kB/s</string>
     <string name="screen_recorder_bitrate_title_250000">250 kB/s</string>
@@ -356,8 +361,8 @@
 
     <!-- Pie Control -->
     <string name="pie_navigation_title">Pie navigation</string>
-    <string name="pie_control_title">Pie</string>
-    <string name="pie_control_summary">Enable pie controls</string>
+    <string name="pie_control_title">Pie control</string>
+    <string name="pie_control_summary">Enable pie navigation controls</string>
     <string name="pie_control_size">Navigation size</string>
     <string name="pie_control_trigger_positions">Trigger options</string>
     <string name="pie_control_trigger_left">Trigger left screen border</string>

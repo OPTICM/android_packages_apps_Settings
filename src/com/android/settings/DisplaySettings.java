@@ -94,11 +94,11 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
     private static final int DLG_GLOBAL_CHANGE_WARNING = 1;
 
     private static final String KEY_EXPANDED_DESKTOP = "expanded_desktop";
-    private static final String KEY_EXPANDED_DESKTOP_NO_NAVBAR = "expanded_desktop_no_navbar";
+    //private static final String KEY_EXPANDED_DESKTOP_NO_NAVBAR = "expanded_desktop_no_navbar";
     private static final String CATEGORY_EXPANDED_DESKTOP = "expanded_desktop_category";
 
     private ListPreference mExpandedDesktopPref;
-    private CheckBoxPreference mExpandedDesktopNoNavbarPref;
+    //private CheckBoxPreference mExpandedDesktopNoNavbarPref;
 
     private CheckBoxPreference mAccelerometer;
     private FontDialogPreference mFontSizePref;
@@ -151,13 +151,18 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
 
         // Expanded desktop
         mExpandedDesktopPref = (ListPreference) findPreference(KEY_EXPANDED_DESKTOP);
-        mExpandedDesktopNoNavbarPref =
-                (CheckBoxPreference) findPreference(KEY_EXPANDED_DESKTOP_NO_NAVBAR);
+        //mExpandedDesktopNoNavbarPref =
+        //        (CheckBoxPreference) findPreference(KEY_EXPANDED_DESKTOP_NO_NAVBAR);
 
         int expandedDesktopValue = Settings.System.getInt(getContentResolver(),
                 Settings.System.EXPANDED_DESKTOP_STYLE, 0);
 
-        try {
+        // All Expanded desktop options for all devices
+        mExpandedDesktopPref.setOnPreferenceChangeListener(this);
+        mExpandedDesktopPref.setValue(String.valueOf(expandedDesktopValue));
+        updateExpandedDesktop(expandedDesktopValue);
+
+        /*try {
             // Only show the navigation bar category on devices that has a navigation bar
             // unless we are forcing it via development settings
             boolean forceNavbar = android.provider.Settings.System.getInt(getContentResolver(),
@@ -178,7 +183,7 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
             }
         } catch (RemoteException e) {
             Log.e(TAG, "Error getting navigation bar status");
-        }
+        }*/
 
         mDisplayRotationPreference = (PreferenceScreen) findPreference(KEY_DISPLAY_ROTATION);
 
@@ -607,10 +612,10 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
             int expandedDesktopValue = Integer.valueOf((String) objValue);
             updateExpandedDesktop(expandedDesktopValue);
         }
-        if (KEY_EXPANDED_DESKTOP_NO_NAVBAR.equals(key)) {
-            boolean value = (Boolean) objValue;
-            updateExpandedDesktop(value ? 2 : 0);
-        }
+        //if (KEY_EXPANDED_DESKTOP_NO_NAVBAR.equals(key)) {
+        //    boolean value = (Boolean) objValue;
+        //    updateExpandedDesktop(value ? 2 : 0);
+        //}
 
         if (KEY_SCREEN_TIMEOUT.equals(key)) {
             int value = Integer.parseInt((String) objValue);
@@ -647,7 +652,6 @@ public class DisplaySettings extends SettingsPreferenceFragment implements
                 Log.e(TAG, "could not persist screen animation style setting", e);
             }
         }
-
         return true;
     }
 
